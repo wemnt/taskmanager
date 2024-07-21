@@ -1,8 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
 from repository import TaskRepository
-from schemas import TaskInput
+from schemas import TaskInput, Task, TaskId
 
 router = APIRouter(
     prefix="/tasks",
@@ -12,10 +11,6 @@ router = APIRouter(
 tasks = []
 
 
-class TaskId(BaseModel):
-    id: int
-
-
 @router.post("")
 async def create_task(
         task: Annotated[TaskInput, Depends()]
@@ -23,6 +18,6 @@ async def create_task(
     new_task_id = await TaskRepository.add_one(task)
     return {"id": new_task_id}
 @router.get("")
-async def get_task():
+async def get_task() -> list[Task]:
     tasks = await TaskRepository.find_all()
-    return {"data": tasks}
+    return tasks

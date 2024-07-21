@@ -21,4 +21,5 @@ class TaskRepository:
             query = select(TasksTable)
             result = await session.execute(query)
             task_models = result.scalars().all()
-            return task_models
+            task_schemas = [Task.model_validate(task_model) for task_model in task_models]
+            return task_schemas
